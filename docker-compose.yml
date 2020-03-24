@@ -1,10 +1,10 @@
 version: '3'
 services:
   vscode:
-    image: "registry.gitlab.com/softrams-public/vscode-docker"
+    image: "registry.gitlab.com/softrams-public/vscode-docker:v1.0.0"
     ports:
       - "8080:8080"
     environment:
      - PASSWORD=softrams
     volumes:
-      - ~/:/home/seluser
+      - ~/coder/:/home/seluser
