@@ -13,16 +13,7 @@ Clone this repo
 
 From repo folder:
 
-## Two Methods
-### Vagrant:
-    # Install vagrant: using http://vagrantup.com/downloads.html
-
-    vagrant up
-
-    # Open a browser to http://localhost:8080 and use password `softrams`
-
-    # enjoy your docker 'virtual' machine!
-
+## Method
 ### Docker Compose:
     
     docker-compose up -d
@@ -38,5 +29,6 @@ From repo folder:
     using the terminal window in vscode, change directories to where you cloned your automation code.
     try running
 
+    #example:
     mvn test-compile gauge:execute -DspecsDir="specs/signin" -Denv="hotfix-dev-headless"
 
