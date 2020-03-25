@@ -1,7 +1,7 @@
 version: '3'
 services:
   vscode:
-    image: "registry.gitlab.com/softrams-public/vscode-docker:v1.0.0"
+    image: "docker.pkg.github.com/softrams/automation-toolset/vscode-automation:v1.0.1"
     ports:
       - "8080:8080"
     environment:
