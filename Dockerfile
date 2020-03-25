@@ -12,9 +12,7 @@ ENV MAVEN_VERSION=3.6.0 \
 ENV PATH $MAVEN_HOME/bin:/usr/local/bin:$PATH
 
 # Packages
-
 USER root
-
 RUN apt-get update \
     && apt-get install -y openjdk-11-jdk \
       curl \
@@ -48,19 +46,20 @@ RUN curl -SsL -o gauge.zip https://github.com/getgauge/gauge/releases/download/v
     && gauge install html-report \
     && gauge install xml-report
 
+# Install fixuid
 RUN curl -SsL https://github.com/boxboat/fixuid/releases/download/v0.4/fixuid-0.4-linux-amd64.tar.gz | tar -C /usr/local/bin -xzf - && \
     chown root:root /usr/local/bin/fixuid && \
     chmod 4755 /usr/local/bin/fixuid && \
     mkdir -p /etc/fixuid && \
     printf "user: seluser\ngroup: seluser\n" > /etc/fixuid/config.yml
 
+# Install Code-Server
 RUN cd /tmp && \
   curl -SsL https://github.com/cdr/code-server/releases/download/${CSVER}/code-server-${CSVER}-linux-x86_64.tar.gz | tar -xzf - && \
   mv code-server* /usr/local/lib/code-server && \
   ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server
 
 USER seluser
-RUN /usr/local/bin/code-server --install-extension getgauge.gauge
 
 EXPOSE 8080
 WORKDIR /home/seluser
