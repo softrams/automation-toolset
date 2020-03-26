@@ -27,7 +27,7 @@ From repo folder:
     Once launched browse to http://localhost:8080
     Link to your local host will be
         - Container: /home/seluser
-        - Host: ~/
+        - Host: ~/automation-home
     
 ## Tests
 ### Steps to run tests:

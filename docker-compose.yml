@@ -7,4 +7,4 @@ services:
     environment:
      - PASSWORD=softrams
     volumes:
-      - ~/:/home/seluser
+      - ~/automation-home/:/home/seluser
