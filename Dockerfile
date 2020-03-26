@@ -63,4 +63,7 @@ USER seluser
 
 EXPOSE 8080
 WORKDIR /home/seluser
+
+RUN /usr/local/bin/code-server --install-extension getgauge.gauge
+
 ENTRYPOINT ["dumb-init", "fixuid", "-q", "/usr/local/bin/code-server", "--host", "0.0.0.0", "."]
