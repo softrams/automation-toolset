@@ -7,9 +7,11 @@ ENV MAVEN_VERSION=3.6.0 \
     SHELL=/bin/bash \
     LANG=en_US.UTF-8 \
     CSVER=3.0.0 \
-    GAUGE_VER=1.0.8
+    GAUGE_VER=1.0.8 \
+    VAULT_VER=1.3.4 \
+    PATH=$MAVEN_HOME/bin:/usr/local/bin:$PATH
 
-ENV PATH $MAVEN_HOME/bin:/usr/local/bin:$PATH
+COPY docker-entrypoint.sh /usr/local/bin/
 
 # Packages
 USER root
@@ -34,6 +36,12 @@ RUN sed -i "s/# en_US.UTF-8/en_US.UTF-8/" /etc/locale.gen \
   && chsh -s /bin/bash \ 
   && echo "seluser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
 
+# Install Vault
+RUN curl -SsL -o vault.zip https://releases.hashicorp.com/vault/${VAULT_VER}/vault_${VAULT_VER}_linux_amd64.zip \
+    && unzip -q vault.zip \
+    && cp ./vault /usr/local/bin/
+
+
 # Install Gauge
 RUN curl -SsL -o gauge.zip https://github.com/getgauge/gauge/releases/download/v${GAUGE_VER}/gauge-${GAUGE_VER}-linux.x86_64.zip \
     && unzip -q gauge.zip \
@@ -47,23 +55,22 @@ RUN curl -SsL -o gauge.zip https://github.com/getgauge/gauge/releases/download/v
     && gauge install xml-report
 
 # Install fixuid
-RUN curl -SsL https://github.com/boxboat/fixuid/releases/download/v0.4/fixuid-0.4-linux-amd64.tar.gz | tar -C /usr/local/bin -xzf - && \
-    chown root:root /usr/local/bin/fixuid && \
-    chmod 4755 /usr/local/bin/fixuid && \
-    mkdir -p /etc/fixuid && \
-    printf "user: seluser\ngroup: seluser\n" > /etc/fixuid/config.yml
+RUN curl -SsL https://github.com/boxboat/fixuid/releases/download/v0.4/fixuid-0.4-linux-amd64.tar.gz | tar -C /usr/local/bin -xzf - \
+    && chown root:root /usr/local/bin/fixuid \
+    && chmod 4755 /usr/local/bin/fixuid \
+    && mkdir -p /etc/fixuid \
+    && printf "user: seluser\ngroup: seluser\n" > /etc/fixuid/config.yml
 
 # Install Code-Server
 RUN cd /tmp && \
-  curl -SsL https://github.com/cdr/code-server/releases/download/${CSVER}/code-server-${CSVER}-linux-x86_64.tar.gz | tar -xzf - && \
-  mv code-server* /usr/local/lib/code-server && \
-  ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server
+  curl -SsL https://github.com/cdr/code-server/releases/download/${CSVER}/code-server-${CSVER}-linux-x86_64.tar.gz | tar -xzf - \
+  && mv code-server* /usr/local/lib/code-server \
+  && ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server
 
 USER seluser
 
 EXPOSE 8080
 WORKDIR /home/seluser
 
-RUN mkdir -p /home/seluser/workspace && /usr/local/bin/code-server --install-extension getgauge.gauge
-
-ENTRYPOINT ["dumb-init", "fixuid", "-q", "/usr/local/bin/code-server", "--host", "0.0.0.0", "/home/seluser/workspace"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["dumb-init", "fixuid", "-q", "/usr/local/bin/code-server", "--host", "0.0.0.0", "/home/seluser"]
