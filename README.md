@@ -9,11 +9,17 @@ Installation
 If you are using linux, install docker: http://docs.docker.com/linux/step_one/
 On mac and windows, install docker desktop: https://www.docker.com/products/docker-desktop
 
-Clone this repo
-
-From repo folder:
-
 ## Setting up
+
+### Git:
+    # Clone this repo
+    
+    https://github.com/softrams/automation-toolset.git
+    
+    # Change directories into the cloned folder
+    
+    cd automation-toolset
+    
 ### Docker Compose:
     
     docker-compose up -d
