@@ -2,33 +2,33 @@ FROM selenium/standalone-chrome:latest
 
 # Variables
 ENV MAVEN_VERSION=3.6.0 \
-    MAVEN_HOME=/usr/lib/mvn \
-    NODE_VERSION=10.14.2 \
-    SHELL=/bin/bash \
-    LANG=en_US.UTF-8 \
-    CSVER=3.1.0 \
-    GAUGE_VER=1.0.8 \
-    VAULT_VER=1.3.4 \
-    PATH=$MAVEN_HOME/bin:/usr/local/bin:$PATH
+  MAVEN_HOME=/usr/lib/mvn \
+  NODE_VERSION=10.14.2 \
+  SHELL=/bin/bash \
+  LANG=en_US.UTF-8 \
+  CSVER=3.2.0 \
+  GAUGE_VER=1.0.8 \
+  VAULT_VER=1.3.4 \
+  PATH=$MAVEN_HOME/bin:/usr/local/bin:$PATH
 
 COPY docker-entrypoint.sh /usr/local/bin/
 
 # Packages
 USER root
 RUN apt-get update \
-    && apt-get install -y openjdk-11-jdk \
-      curl \
-      dumb-init \
-      && curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - \
-      && apt-get install -y \
-      nodejs \
-      maven \
-      net-tools \
-      git \
-	  && apt-get clean \
-	  && rm -rf /var/lib/apt/lists/* \
-	  && rm -rf /var/cache/oracle-jdk11-installer \
-    && npm install -g npmlog
+  && apt-get install -y openjdk-11-jdk \
+  curl \
+  dumb-init \
+  && curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - \
+  && apt-get install -y \
+  nodejs \
+  maven \
+  net-tools \
+  git \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /var/cache/oracle-jdk11-installer \
+  && npm install -g npmlog
 
 # https://wiki.debian.org/Locale#Manually
 RUN sed -i "s/# en_US.UTF-8/en_US.UTF-8/" /etc/locale.gen \
@@ -38,28 +38,28 @@ RUN sed -i "s/# en_US.UTF-8/en_US.UTF-8/" /etc/locale.gen \
 
 # Install Vault
 RUN curl -SsL -o vault.zip https://releases.hashicorp.com/vault/${VAULT_VER}/vault_${VAULT_VER}_linux_amd64.zip \
-    && unzip -q vault.zip \
-    && cp ./vault /usr/local/bin/
+  && unzip -q vault.zip \
+  && cp ./vault /usr/local/bin/
 
 
 # Install Gauge
 RUN curl -SsL -o gauge.zip https://github.com/getgauge/gauge/releases/download/v${GAUGE_VER}/gauge-${GAUGE_VER}-linux.x86_64.zip \
-    && unzip -q gauge.zip \
-    && cp ./gauge /usr/local/bin/ \
-    && cd ../tmp \
-    && rm -rf tmp \
-    && gauge install java \
-    && gauge install js \
-    && gauge install screenshot \
-    && gauge install html-report \
-    && gauge install xml-report
+  && unzip -q gauge.zip \
+  && cp ./gauge /usr/local/bin/ \
+  && cd ../tmp \
+  && rm -rf tmp \
+  && gauge install java \
+  && gauge install js \
+  && gauge install screenshot \
+  && gauge install html-report \
+  && gauge install xml-report
 
 # Install fixuid
 RUN curl -SsL https://github.com/boxboat/fixuid/releases/download/v0.4/fixuid-0.4-linux-amd64.tar.gz | tar -C /usr/local/bin -xzf - \
-    && chown root:root /usr/local/bin/fixuid \
-    && chmod 4755 /usr/local/bin/fixuid \
-    && mkdir -p /etc/fixuid \
-    && printf "user: seluser\ngroup: seluser\n" > /etc/fixuid/config.yml
+  && chown root:root /usr/local/bin/fixuid \
+  && chmod 4755 /usr/local/bin/fixuid \
+  && mkdir -p /etc/fixuid \
+  && printf "user: seluser\ngroup: seluser\n" > /etc/fixuid/config.yml
 
 # Install Code-Server
 RUN cd /tmp && \
